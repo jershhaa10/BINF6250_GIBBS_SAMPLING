@@ -8,3 +8,5 @@ __pycache__/
 data_readers.py
 motif_ops.py
 seq_ops.py
+*.gff
+*.fna
