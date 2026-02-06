@@ -4,7 +4,7 @@ __pycache__/
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
-code-workspace
+*.code-workspace
 data_readers.py
 motif_ops.py
 seq_ops.py
