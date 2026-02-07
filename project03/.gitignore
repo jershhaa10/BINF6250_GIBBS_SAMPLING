@@ -10,3 +10,9 @@ motif_ops.py
 seq_ops.py
 *.gff
 *.fna
+*.bam
+*.bai
+*.fna
+.idea/
+Pipfile*
+test.py
