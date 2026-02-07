@@ -1,6 +1,12 @@
-*.bam
-*.bai
-*.fna
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.code-workspace
+data_readers.py
+motif_ops.py
+seq_ops.py
 *.gff
-.idea/
-Pipfile*
+*.fna
