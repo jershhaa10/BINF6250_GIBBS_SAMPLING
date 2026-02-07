@@ -11,6 +11,6 @@ for read in bam.fetch('1', 0, 1000000):
         continue
     seq = getattr(read, "query_sequence", None)
     seqs1.append(seq)
-print(len(seqs1))
+#print(len(seqs1))
 #now in other scripts can import seqs1 from seqs1 for testing
 bam.close()
