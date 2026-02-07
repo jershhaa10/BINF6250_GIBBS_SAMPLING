@@ -61,7 +61,7 @@ def build_pfm(sequences: List[str], length: int) -> np.ndarray:
     return pfm
 
 
-def build_pwm(pfm: np.ndarray) -> np.ndarray:
+def build_pwm(pfm: np.ndarray, bg=None, p=0.25) -> np.ndarray:
     """
     Build a Position Weight Matrix (PWM) from a Position Frequency Matrix (PFM).
 
@@ -71,11 +71,13 @@ def build_pwm(pfm: np.ndarray) -> np.ndarray:
     Returns:
         np.ndarray: PWM with dimensions 4 x length.
     """
-    p = 0.25
-    bg = 0.25
-    
+
+    if bg is None:
+        bg = 0.25
+
+    # Sum is calculated column wise in a 2D array
     sums = np.sum(pfm, axis=0) + 4 * p
-    pwm = np.log2((pfm + p) / sums[:, np.newaxis].T) - np.log2(bg)
+    pwm = np.log2((pfm + p) / sums[:, np.newaxis].T) - np.log2(bg[:, np.newaxis])
     
     return pwm
 
