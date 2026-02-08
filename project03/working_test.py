@@ -1,11 +1,62 @@
+'''
+Working implementation.
+'''
 import random
 import numpy as np
 from math import log, sqrt
+import bamnostic
 
 BASES = ("A", "C", "G", "T")
 BASE_INDEX = {"A": 0, "C": 1, "G": 2, "T": 3}
 
-from motif_ops import score_kmer
+### get reads ###
+
+COMP_TRANS = str.maketrans('ACGTacgt', 'TGCAtcga')
+def reverse_complement(seq):
+    # from seq_ops
+    """Get the reverse complement of a nucleotide sequence
+
+    Returns the reverse complement of the input string representing a DNA 
+    sequence. Works only with DNA sequences consisting solely of  A, C, G, T or N 
+    characters. Preserves the case of the input sequence.
+
+    Args:
+        seq (str): a DNA sequence string
+
+    Returns:
+        (str): The reverse complement of the input DNA sequence string.
+    """
+
+    # Translate then reverse seq
+    return seq.translate(COMP_TRANS)[::-1]
+
+# reservoir sampling, because oh my god
+def get_reads_from_bam(bam_path, n, seed=None):
+    rng = random.Random(seed)
+    bam = bamnostic.AlignmentFile(bam_path, "rb")
+
+    reservoir = []
+    seen = 0  # number of reads seen so far
+
+    for read in bam:
+        if getattr(read, "is_unmapped", True) or getattr(read, "is_secondary", True) or \
+           getattr(read, "is_supplementary", True):
+            continue
+        seq = getattr(read, "query_sequence", None)
+        if getattr(read, "is_reverse", False):
+            seq = reverse_complement(seq)
+        seen += 1
+        if len(reservoir) < n:
+            reservoir.append(seq)
+        else:
+            j = rng.randrange(seen)
+            if j < n:
+                reservoir[j] = seq
+
+    bam.close()
+
+    print(f"successfully retrieved {len(reservoir)} reads from bam file.")
+    return reservoir
 
 ### random small helpers ###
 def add_kmer_to_pfm(pfm: np.ndarray, kmer: str, sign: int) -> None:
@@ -249,7 +300,7 @@ def gibbs_update(
     # random choice
     # choices() wants lists
     population = valid_windows.tolist() 
-    w_list = w.tolist()
+    w_list = w[valid].tolist()
 
     # choose new start probabilisitically
     new_start = rng.choices(population, weights=w_list, k=1)[0]
@@ -258,6 +309,11 @@ def gibbs_update(
     new_kmer = read[new_start:new_start + k]
     add_kmer_to_pfm(pfm, new_kmer, sign=+1)
     starts[i] = new_start
+
+    # print(f"""
+    # read n. {i}:
+    # start position {old_start} -> {new_start}
+    # """)
 
     return new_start
 
@@ -301,6 +357,8 @@ def GibbsMotifSampler(
 
         if sweep <= burn_in_sweeps: # are we still in burn-in
             continue
+        if sweep == (burn_in_sweeps+1):
+            print("..done burning in...")
         if (sweep - burn_in_sweeps) % check_every_sweeps != 0: # is it not checking time
             continue
 
@@ -320,7 +378,11 @@ def GibbsMotifSampler(
 
         prev_pwm = pwm_now
         ic = pfm_ic(pfm,motif_pseudocount)
-        print(f"{sweep} sweeps complete, IC = {ic:4f}")
+        print(f"""
+        {sweep} sweeps complete,
+        IC = {ic:3f},
+        relative Frobenius diff = {rel:3f}
+        """)
 
         if rel < rel_thresh:
             break
@@ -328,18 +390,21 @@ def GibbsMotifSampler(
     return pfm
 
 if __name__ == "__main__":
-    #TEST EXAMPLE
-    from seqs1 import seqs1
+    seed=123
 
-    pfm = GibbsMotifSampler(seqs=seqs1, 
-    k= 10, seed = 123,
-    bg_pseudocount = 1.0, motif_pseudocount = 0.25,
-    max_tries_init = 50, 
-    burn_in_sweeps = 100,
-    check_every_sweeps = 10,
-    rel_thresh = 0.001,
-    max_sweeps = 1000
-    )
+    seqs = get_reads_from_bam("data/SRR9090854.subsampled_5pct.bam",10000,seed=seed)
+
+    pfm = GibbsMotifSampler(
+        seqs=seqs, 
+        k = 9, seed = seed,
+        bg_pseudocount = 1.0, 
+        motif_pseudocount = 0.25,
+        max_tries_init = 10, 
+        burn_in_sweeps = 10,
+        check_every_sweeps = 10,
+        rel_thresh = 0.01,
+        max_sweeps = 1000
+        )
 
     #print(pfm.shape)
     #print(pfm.sum(axis=0, keepdims=True))
