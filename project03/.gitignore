@@ -15,4 +15,4 @@ seq_ops.py
 *.fna
 .idea/
 Pipfile*
-test.py
+
