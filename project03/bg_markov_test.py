@@ -2,18 +2,34 @@ BASES = ("A", "C", "G", "T")
 
 # 0th order MC (just iid?) 
 
-def build_markov_0th_order(reads:list, pseudocount:float):
-    base_counts = {b: 0 for b in BASES}
+def build_markov_0th_order(reads: list, pseudocount: float) -> dict:
+    '''
+    returns a dict like {"A":pA,"C":pC,"G":pG,"T":pT}
+    '''
+
+    if pseudocount <= 0:
+        raise ValueError("pseudocount must be > 0")
+
+    a = c = g = t = 0
 
     for read in reads:
         if not read:
             continue
-        for ch in read.upper():
-            if ch in BASES:
-                base_counts[ch] += 1
+        r = read.upper()
 
-    total = sum(base_counts[b] for b in BASES) + pseudocount * 4
-    return {b: (base_counts[b] + pseudocount) / total for b in BASES}
+        a += r.count("A")
+        c += r.count("C")
+        g += r.count("G")
+        t += r.count("T")
+
+    total = (a + c + g + t) + pseudocount * 4
+
+    return {
+        "A": (a + pseudocount) / total,
+        "C": (c + pseudocount) / total,
+        "G": (g + pseudocount) / total,
+        "T": (t + pseudocount) / total,
+    }
 
 # 1st order MC
 
