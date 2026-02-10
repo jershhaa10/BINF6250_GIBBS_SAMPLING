@@ -5,6 +5,8 @@ import random
 import numpy as np
 from math import log, sqrt
 import bamnostic
+import seqlogo as sl
+import pandas as pd
 
 BASES = ("A", "C", "G", "T")
 BASE_INDEX = {"A": 0, "C": 1, "G": 2, "T": 3}
@@ -392,7 +394,7 @@ def GibbsMotifSampler(
 if __name__ == "__main__":
     seed=123
 
-    seqs = get_reads_from_bam("data/SRR9090854.subsampled_5pct.bam",10000,seed=seed)
+    seqs = get_reads_from_bam("data/SRR9090854.subsampled_5pct.bam",100,seed=seed)
 
     pfm = GibbsMotifSampler(
         seqs=seqs, 
@@ -406,8 +408,8 @@ if __name__ == "__main__":
         max_sweeps = 1000
         )
 
-    #print(pfm.shape)
-    #print(pfm.sum(axis=0, keepdims=True))
-
+    print(pfm.shape)
+    print(pfm.sum(axis=0, keepdims=True))
     with np.printoptions(precision=5):
         print(pfm)
+    print(type(pfm))
