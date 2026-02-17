@@ -5,7 +5,6 @@ import random
 import numpy as np
 from math import log, sqrt
 import bamnostic
-import seqlogo as sl
 import pandas as pd
 
 BASES = ("A", "C", "G", "T")
@@ -13,52 +12,52 @@ BASE_INDEX = {"A": 0, "C": 1, "G": 2, "T": 3}
 
 ### get reads ###
 
-COMP_TRANS = str.maketrans('ACGTacgt', 'TGCAtcga')
-def reverse_complement(seq):
-    # from seq_ops
-    """Get the reverse complement of a nucleotide sequence
+# COMP_TRANS = str.maketrans('ACGTacgt', 'TGCAtcga')
+# def reverse_complement(seq):
+#     # from seq_ops
+#     """Get the reverse complement of a nucleotide sequence
 
-    Returns the reverse complement of the input string representing a DNA 
-    sequence. Works only with DNA sequences consisting solely of  A, C, G, T or N 
-    characters. Preserves the case of the input sequence.
+#     Returns the reverse complement of the input string representing a DNA 
+#     sequence. Works only with DNA sequences consisting solely of  A, C, G, T or N 
+#     characters. Preserves the case of the input sequence.
 
-    Args:
-        seq (str): a DNA sequence string
+#     Args:
+#         seq (str): a DNA sequence string
 
-    Returns:
-        (str): The reverse complement of the input DNA sequence string.
-    """
+#     Returns:
+#         (str): The reverse complement of the input DNA sequence string.
+#     """
 
-    # Translate then reverse seq
-    return seq.translate(COMP_TRANS)[::-1]
+#     # Translate then reverse seq
+#     return seq.translate(COMP_TRANS)[::-1]
 
-# reservoir sampling, because oh my god
-def get_reads_from_bam(bam_path, n, seed=None):
-    rng = random.Random(seed)
-    bam = bamnostic.AlignmentFile(bam_path, "rb")
+# # reservoir sampling, because oh my god
+# def get_reads_from_bam(bam_path, n, seed=None):
+#     rng = random.Random(seed)
+#     bam = bamnostic.AlignmentFile(bam_path, "rb")
 
-    reservoir = []
-    seen = 0  # number of reads seen so far
+#     reservoir = []
+#     seen = 0  # number of reads seen so far
 
-    for read in bam:
-        if getattr(read, "is_unmapped", True) or getattr(read, "is_secondary", True) or \
-           getattr(read, "is_supplementary", True):
-            continue
-        seq = getattr(read, "query_sequence", None)
-        if getattr(read, "is_reverse", False):
-            seq = reverse_complement(seq)
-        seen += 1
-        if len(reservoir) < n:
-            reservoir.append(seq)
-        else:
-            j = rng.randrange(seen)
-            if j < n:
-                reservoir[j] = seq
+#     for read in bam:
+#         if getattr(read, "is_unmapped", True) or getattr(read, "is_secondary", True) or \
+#            getattr(read, "is_supplementary", True):
+#             continue
+#         seq = getattr(read, "query_sequence", None)
+#         if getattr(read, "is_reverse", False):
+#             seq = reverse_complement(seq)
+#         seen += 1
+#         if len(reservoir) < n:
+#             reservoir.append(seq)
+#         else:
+#             j = rng.randrange(seen)
+#             if j < n:
+#                 reservoir[j] = seq
 
-    bam.close()
+#     bam.close()
 
-    print(f"successfully retrieved {len(reservoir)} reads from bam file.")
-    return reservoir
+#     print(f"successfully retrieved {len(reservoir)} reads from bam file.")
+#     return reservoir
 
 ### random small helpers ###
 def add_kmer_to_pfm(pfm: np.ndarray, kmer: str, sign: int) -> None:
@@ -322,8 +321,12 @@ def gibbs_update(
 ##### ALGORITHM WRAPPER #####
 
 def GibbsMotifSampler(
-    seqs: list[str], k: int, seed: int = 123,
-    bg_pseudocount: float = 1.0, motif_pseudocount: float = 0.25,
+    k: int, 
+    seqs: list[str], 
+    bg_sample: list[str] | None = None, # if it's None use seqs,
+    seed: int = 123,
+    bg_pseudocount: float = 1.0, 
+    motif_pseudocount: float = 0.25,
     max_tries_init: int = 50, 
     burn_in_sweeps: int = 1,
     check_every_sweeps: int = 10,
@@ -336,8 +339,13 @@ def GibbsMotifSampler(
     if not seqs:
         raise ValueError("seqs must be non-empty")
 
-    # 0th order iid
-    bg = build_markov_0th_order(seqs, bg_pseudocount)
+    # 0th order iid background
+    if bg_sample is None:
+        bg_sample = seqs
+    if not bg_sample:
+        raise ValueError("bg_sample was provided but is empty")
+ 
+    bg = build_markov_0th_order(bg_sample, bg_pseudocount)
 
     ###### INITIATION ##########
     rng = random.Random(seed)
@@ -392,20 +400,28 @@ def GibbsMotifSampler(
     return pfm
 
 if __name__ == "__main__":
-    seed=123
+    seed=12345
 
-    seqs = get_reads_from_bam("data/SRR9090854.subsampled_5pct.bam",100,seed=seed)
+    # get motif windows
+    with open("window_seqs.txt") as f:
+        seqs = [ln.strip().upper() for ln in f if ln.strip()]
+
+    # get background-training sequences
+    with open("flank_seqs.txt") as f: 
+        bg_sample = [ln.strip().upper() for ln in f if ln.strip()]
 
     pfm = GibbsMotifSampler(
+        k = 38,
         seqs=seqs, 
-        k = 9, seed = seed,
+        bg_sample = bg_sample,
+        seed = seed,
         bg_pseudocount = 1.0, 
         motif_pseudocount = 0.25,
-        max_tries_init = 10, 
-        burn_in_sweeps = 10,
+        max_tries_init = 5, 
+        burn_in_sweeps = 5,
         check_every_sweeps = 10,
-        rel_thresh = 0.01,
-        max_sweeps = 1000
+        rel_thresh = 0.05,
+        max_sweeps = 50000
         )
 
     print(pfm.shape)

@@ -15,4 +15,6 @@ seq_ops.py
 *.fna
 .idea/
 Pipfile*
-
+ref/
+*.txt
+macs3_out/

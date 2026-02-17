@@ -1,5 +1,5 @@
 import bamnostic 
-
+import math 
 # bam check
 bam = bamnostic.AlignmentFile("data/SRR9090854.subsampled_5pct.bam", "rb")
 
@@ -11,6 +11,15 @@ print("first 3 SQ records:", sq[:3])
 print("first 3 contig lengths:", bam.lengths[:3])
 
 print("Reference contigs:", bam.references)
+print(min(bam.lengths))
 
+min_len = math.inf
+min_read_name = None
+
+
+for read in bam:
+       read.seq
+
+print(min_len)
 
 bam.close()
