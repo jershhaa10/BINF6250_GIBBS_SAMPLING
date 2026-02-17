@@ -74,8 +74,9 @@ Description of the stumbling blocks the team experienced
 
 # Personal Reflections
 ## Group Leader
+Aaronie Jersha Jenyfred
 
-## Other member
+## Other members
 Other members' reflections on the project
 
 # Generative AI Appendix
