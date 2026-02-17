@@ -74,7 +74,7 @@ Description of the stumbling blocks the team experienced
 
 # Personal Reflections
 ## Group Leader
-Aaronie Jersha Jenyfred: Chantera and Linh were both amazing to work with. We were able to co-ordinate well with each other and clarify doubts and debugging challenges. For me, as already mentioned, this was definitely one of the hardest projects to work with. 
+
 ## Other member
 Other members' reflections on the project
 
