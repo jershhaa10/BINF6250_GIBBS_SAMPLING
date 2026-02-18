@@ -5,7 +5,7 @@ Description of the project
 # Pseudocode
 
 ```
-GibbsMotifSampler(...)
+GibbsMotifSampler function
     Validate all the input parameters
       If k <= 0
          Raise an error
