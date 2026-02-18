@@ -18,3 +18,4 @@ Pipfile*
 ref/
 *.txt
 macs3_out/
+data/
