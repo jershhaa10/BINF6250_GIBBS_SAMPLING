@@ -1,4 +1,4 @@
-# BINF6250_GIBBS_SAMPLING
+
 # Introduction
 Description of the project
 
