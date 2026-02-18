@@ -5,9 +5,6 @@ __pycache__/
 .mypy_cache/
 .ruff_cache/
 *.code-workspace
-data_readers.py
-motif_ops.py
-seq_ops.py
 *.gff
 *.fna
 *.bam
@@ -18,4 +15,4 @@ Pipfile*
 ref/
 *.txt
 macs3_out/
-data/
+data/*
