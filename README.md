@@ -9,9 +9,6 @@ The project implements the Gibbs Sampling algorithm to identify the shared DNA m
 # Input
 Motif Sequences: We used `macs3` to derive peaks from the 3.2 million Chip-Seq fragments. We filtered the peak data, and retrieved possible motif sequences by flanking the summit of each peak by a default of 50 bps on each side. As the Chip-seq data was annotated against b37, a variant of GRCH37, we utilized GRCh37 as the reference genome to get the sequence information.
 
-# Helper Functions
-
-
 # Pseudocode
 ```
 GibbsMotifSampler function
