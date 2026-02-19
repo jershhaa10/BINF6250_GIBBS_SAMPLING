@@ -1,11 +1,10 @@
-# BINF6250_GIBBS_SAMPLING
+
 # Introduction
-Description of the project
+The project implements the Gibbs Sampling algorithm to identify the shared DNA motif regions across multiple sequences. The algorithm repeatedly updates the motif positions using probability-based sampling to improve the motif model. Over several iterations, the motif becomes stable and represents a conserved pattern in the sequences.
 
 # Pseudocode
-
 ```
-GibbsMotifSampler(...)
+GibbsMotifSampler function
     Validate all the input parameters
       If k <= 0
          Raise an error
@@ -75,7 +74,7 @@ Description of the stumbling blocks the team experienced
 
 # Personal Reflections
 ## Group Leader
-Aaronie Jersha Jenyfred
+Aaronie Jersha Jenyfred:  Chantera and Linh were great to work with. We were able to discuss and plan out the implementation together since that was the hardest part. We were able to align and validate our logic and at the same time have different viewpoints over the same script, as to how to write it with a flow. 
 
 ## Other members
 Other members' reflections on the project
