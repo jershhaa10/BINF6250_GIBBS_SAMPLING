@@ -13,15 +13,6 @@ seq_ops.py
 *.bam
 *.bai
 *.fna
-<<<<<<< Updated upstream
 .idea/
 Pipfile*
 
-=======
-*.gff
-*.fastq
-*.fasta
-*_peaks.narrowPeak
-*_peaks.xls
-*.bed
->>>>>>> Stashed changes
