@@ -2,6 +2,16 @@
 # Introduction
 The project implements the Gibbs Sampling algorithm to identify the shared DNA motif regions across multiple sequences. The algorithm repeatedly updates the motif positions using probability-based sampling to improve the motif model. Over several iterations, the motif becomes stable and represents a conserved pattern in the sequences.
 
+# Assumptions
+* We assumed that the main Gibbs Sampling function would receive a list of sequences.
+* We assumed that the motif is present in all of the sequences
+
+# Input
+Motif Sequences: We used `macs3` to derive peaks from the 3.2 million Chip-Seq fragments. We filtered the peak data, and retrieved possible motif sequences by flanking the summit of each peak by a default of 50 bps on each side. As the Chip-seq data was annotated against b37, a variant of GRCH37, we utilized GRCh37 as the reference genome to get the sequence information.
+
+# Helper Functions
+
+
 # Pseudocode
 ```
 GibbsMotifSampler function
@@ -67,17 +77,19 @@ GibbsMotifSampler function
 ```
 
 # Successes
-Description of the team's learning points
+We were able to implement the Gibbs sampling algorithm, and we felt more confident in our approach and results when we included peaks calling. We did work on this individually, but were able to consolidate our thoughts and approaches smoothly.
 
 # Struggles
-Description of the stumbling blocks the team experienced
+Some struggles we had with this project includes conceptually understanding the Gibbs sampling algorithm. We also struggled with processing the dataset due to its size, so we eneded up subsampling and never running the full file. This was alleviated when we used peak calling. We also struggled with integrating the functions into our workflow initially.
 
 # Personal Reflections
 ## Group Leader
 Aaronie Jersha Jenyfred:  Chantera and Linh were great to work with. We were able to discuss and plan out the implementation together since that was the hardest part. We were able to align and validate our logic and at the same time have different viewpoints over the same script, as to how to write it with a flow. 
 
 ## Other members
-Other members' reflections on the project
+Chantera Lazard: My team were great and they challenged me to think of the algorithm mathematically. We were able to learn from each other especialy as this algorithm was challenging for us all. I also respected the ambition in my teammates to go above and beyond in understanding the algorithm and code.
+
+Ngoc Linh Nguyen: 
 
 # Generative AI Appendix
-As per the syllabus
+None
