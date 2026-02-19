@@ -1,4 +1,10 @@
 #!/usr/bin/env python3
+"""
+Read a MACS3 *_peaks.narrowPeak file and a reference FASTA, then writes two newline-delimited sequence files suitable for loading into Python lists:
+    - window_seqs.txt: summit-centered windows (len=WINLEN, default 101). Intended as the motif-search input (`seqs`) to the Gibbs sampler.
+    - flank_seqs.txt: fixed-length background per peak (len=2*FLANK, default 100), formed by concatenating the FLANK bases immediately left and right of the window. Intended as the background-training input (`bg_sample`) for a 0th-order background model, reducing noise contamination from the motif window itself.
+"""
+
 import argparse
 import pandas as pd # to read narrowpeak as table
 import pysam
@@ -9,7 +15,8 @@ WINLEN = 101
 def get_window_and_flanks(
     fa: pysam.FastaFile, chrom: str, summit0: int,
     winlen: int = 101, flank: int = 50
-) -> tuple[str, str] | None:
+    ) -> tuple[str, str] | None:
+
     """
     fetch one extended region around summit and cut it into:
     - window: centered on summit, length winlen
