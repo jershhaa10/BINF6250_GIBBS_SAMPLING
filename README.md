@@ -86,7 +86,7 @@ Aaronie Jersha Jenyfred:  Chantera and Linh were great to work with. We were abl
 ## Other members
 Chantera Lazard: My team were great and they challenged me to think of the algorithm mathematically. We were able to learn from each other especialy as this algorithm was challenging for us all. I also respected the ambition in my teammates to go above and beyond in understanding the algorithm and code.
 
-Ngoc Linh Nguyen: 
+Ngoc Linh Nguyen: I gained a lot from this project. Conversations with my group members were consistently engaging and helped us collaborate effectively to understand the target algorithm and to think critically about the choices we made while building the pipeline. Working with real experimental data added an extra layer of difficulty, but it was ultimately a valuable learning experience for us as bioinformatics students as it reinforced our understanding of standard data formats and common tools such as samtools and MACS3.
 
 # Generative AI Appendix
 None
